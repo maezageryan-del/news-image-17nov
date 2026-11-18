@@ -8,11 +8,27 @@
  * the way is missing.
  */
 
-import { copyFileSync, existsSync, mkdirSync, statSync } from "node:fs";
+import { closeSync, copyFileSync, existsSync, mkdirSync, openSync, readSync, statSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const PAGE_NAME = "entry.png";
+
+// Every PNG file opens with this fixed 8-byte signature; checking it on the
+// delivered copy proves the bytes that arrived are a real PNG, not just the
+// right number of bytes.
+const PNG_SIGNATURE = [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a];
+
+function hasPngSignature(path: string): boolean {
+  const fd = openSync(path, "r");
+  try {
+    const header = Buffer.alloc(PNG_SIGNATURE.length);
+    const read = readSync(fd, header, 0, header.length, 0);
+    return read === PNG_SIGNATURE.length && PNG_SIGNATURE.every((byte, i) => header[i] === byte);
+  } finally {
+    closeSync(fd);
+  }
+}
 
 function fail(message: string): never {
   console.error(`the-world-in-one-day: ${message}`);
@@ -59,6 +75,9 @@ function main(): void {
       `copy looks incomplete: source is ${sourceSize} bytes, ` +
         `destination is ${targetSize} bytes.`,
     );
+  }
+  if (!hasPngSignature(target)) {
+    fail(`copy at ${target} does not start with a PNG signature; the delivered page is not a valid PNG.`);
   }
 
   console.log(`the-world-in-one-day: delivered ${PAGE_NAME} (${sourceSize} bytes) to ${target}`);
