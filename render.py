@@ -93,6 +93,9 @@ def decode_topojson(path):
     polys = []
     geoms = topo["objects"]["countries"]["geometries"]
     for g in geoms:
+        # Antarctica adds only a fringe of dots at the map's bottom edge.
+        if (g.get("properties") or {}).get("name") == "Antarctica":
+            continue
         t = g["type"]
         arc_lists = g["arcs"]
         if t == "Polygon":
@@ -135,10 +138,8 @@ def draw_map(draw, polys, x0, y0, w, h, markers):
             if px[gx, gy]:
                 draw.ellipse([x0 + gx - r, y0 + gy - r,
                               x0 + gx + r, y0 + gy + r], fill=SLATE)
-    # Graticule: equator + tropics, faint.
-    for lat in (0.0,):
-        _, yy = lonlat_to_xy(0, lat, x0, y0, w, h)
-        draw.line([(x0, yy), (x0 + w, yy)], fill=(200, 195, 185), width=1)
+    # Graticule removed: a lone equator line read as a stray mark at
+    # this scale; the dotted continents carry the map on their own.
     # Numbered story markers.
     for m in markers:
         mx, my = lonlat_to_xy(m["lon"], m["lat"], x0, y0, w, h)
