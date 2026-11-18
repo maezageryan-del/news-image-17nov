@@ -1,4 +1,6 @@
-[![make.fun news-image-20261117](https://make.fun/badge/news-image-20261117.svg)](https://make.fun/bounty/news-image-20261117)
+[![make.fun · news-image-20261117](https://make.fun/badge/news-image-20261117.svg)](https://make.fun/bounty/news-image-20261117)
+[![rank](https://make.fun/badge/news-image-20261117/maezageryan-del/news-image-17nov/rank.svg)](https://make.fun/bounty/news-image-20261117/leaderboard)
+[![reward](https://make.fun/badge/news-image-20261117/maezageryan-del/news-image-17nov/reward.svg)](https://make.fun/bounty/news-image-20261117)
 
 # The World in One Day — Tuesday 17 November 2026
 
